@@ -17,6 +17,16 @@ class ProdutoService
         return $this->produtos->create($dados);
     }
 
+    public function update(Produto $produto, array $dados)
+    {
+        $preco = $dados['preco'] ?? $produto->preco;
+        $preco_custo = $dados['preco_custo'] ?? $produto->preco_custo;
+
+        $this->verificarMargem((float) $preco, (float) $preco_custo);
+
+        return $this->produtos->update($produto, $dados);
+    }
+
     public function listar(array $filtros)
     {
         return $this->produtos->search($filtros);
@@ -27,7 +37,7 @@ class ProdutoService
         $valor = $custo + (0.1 * $custo);
         $preco_minimo = round($valor, 2);
 
-        if($preco < $preco_minimo){
+        if ($preco < $preco_minimo) {
             throw ValidationException::withMessages([
                 'preco' => sprintf('O preço deve ser mais do que 10 por cento do valor de custo: %.2f', $preco_minimo),
             ]);

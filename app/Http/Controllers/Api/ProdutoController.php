@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 
 class ProdutoController extends Controller
 {
-
     public function __construct(private ProdutoService $service) {}
 
     /**
@@ -20,6 +19,8 @@ class ProdutoController extends Controller
     {
         $filtros = [
             'search' => $request->query('search'),
+            'preco_min' => $request->query('preco_min'),
+            'preco_max' => $request->query('preco_max'),
         ];
 
         return ProdutoResource::collection($this->service->listar($filtros));
@@ -66,7 +67,7 @@ class ProdutoController extends Controller
             'quantidade' => 'sometimes|integer|min:0',
         ]);
 
-        $produto->update($dados);
+        $produto = $this->service->update($produto, $dados);
 
         return new ProdutoResource($produto);
     }
